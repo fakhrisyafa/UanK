@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="UANK">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%231A1A1A'/><circle cx='96' cy='96' r='60' fill='none' stroke='%23CCCCCC' stroke-width='8'/><path d='M96 60v72' stroke='%23CCCCCC' stroke-width='8' stroke-linecap='round'/><path d='M96 96h40' stroke='%23CCCCCC' stroke-width='8' stroke-linecap='round'/></svg>">
+    <link rel="apple-touch-icon" href="icons/icon-192.svg">
+    <title>UANK - Keuangan Pribadi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <h1 class="app-title">UANK</h1>
+            <button id="theme-toggle" class="icon-button" aria-label="Ganti tema">
+                <svg class="icon-sun" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="icon-moon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Beranda -->
+            <section id="page-home" class="page active">
+                <div class="page-content">
+                    <!-- Week Status Banner -->
+                    <div id="week-banner" class="banner hidden">
+                        <span class="banner-text">Minggu selesai. Tutup sekarang?</span>
+                        <button class="banner-action" data-action="close-week">Tutup</button>
+                    </div>
+
+                    <!-- Hero Card - Budget Overview -->
+                    <div class="card hero-card">
+                        <div class="card-header">
+                            <span class="card-label">Sisa Anggaran Minggu Ini</span>
+                            <span class="week-period" id="current-week">-</span>
+                        </div>
+                        <div class="hero-amount" id="remaining-budget">Rp0</div>
+                        <div class="budget-summary">
+                            <div class="budget-stat">
+                                <span class="stat-label">Anggaran</span>
+                                <span class="stat-value" id="total-budget">Rp0</span>
+                            </div>
+                            <div class="budget-stat">
+                                <span class="stat-label">Terpakai</span>
+                                <span class="stat-value" id="total-spent">Rp0</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="budget-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Savings Card -->
+                    <div class="card savings-card">
+                        <div class="card-header">
+                            <span class="card-label">Total Tabungan</span>
+                        </div>
+                        <div class="savings-amount" id="total-savings">Rp0</div>
+                    </div>
+
+                    <!-- Categories Overview -->
+                    <div class="section-header">
+                        <h2 class="section-title">Kategori</h2>
+                    </div>
+                    <div class="categories-scroll" id="categories-list">
+                        <!-- Categories will be rendered here -->
+                        <div class="category-item skeleton">
+                            <div class="category-info">
+                                <span class="category-name">Kebutuhan</span>
+                                <span class="category-remaining">Rp0</span>
+                            </div>
+                            <div class="category-bar">
+                                <div class="category-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="section-header">
+                        <h2 class="section-title">Transaksi Terbaru</h2>
+                        <button class="text-link" data-nav="transactions">Lihat Semua</button>
+                    </div>
+                    <div class="transactions-list" id="recent-transactions">
+                        <!-- Transactions will be rendered here -->
+                        <div class="empty-state">
+                            <p>Belum ada transaksi</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transaksi -->
+            <section id="page-transactions" class="page">
+                <div class="page-content">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">Semua</button>
+                        <button class="filter-tab" data-filter="expense">Pengeluaran</button>
+                        <button class="filter-tab" data-filter="income">Pemasukan</button>
+                    </div>
+                    <div class="transactions-list full-list" id="all-transactions">
+                        <div class="empty-state">
+                            <p>Belum ada transaksi</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tabungan -->
+            <section id="page-savings" class="page">
+                <div class="page-content">
+                    <div class="card savings-hero">
+                        <div class="card-header">
+                            <span class="card-label">Total Tabungan</span>
+                        </div>
+                        <div class="savings-main-amount" id="savings-total">Rp0</div>
+                        <div class="savings-actions">
+                            <button class="button secondary" id="btn-withdraw">Tarik Tabungan</button>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <h2 class="section-title">Riwayat</h2>
+                    </div>
+                    <div class="savings-history" id="savings-history">
+                        <div class="empty-state">
+                            <p>Belum ada riwayat tabungan</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analisis -->
+            <section id="page-analysis" class="page">
+                <div class="page-content">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-period="weekly">Mingguan</button>
+                        <button class="filter-tab" data-period="monthly">Bulanan</button>
+                    </div>
+
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <span class="summary-label">Pemasukan</span>
+                            <span class="summary-value" id="analysis-income">Rp0</span>
+                        </div>
+                        <div class="summary-card">
+                            <span class="summary-label">Pengeluaran</span>
+                            <span class="summary-value" id="analysis-expense">Rp0</span>
+                        </div>
+                        <div class="summary-card">
+                            <span class="summary-label">Selisih</span>
+                            <span class="summary-value" id="analysis-balance">Rp0</span>
+                        </div>
+                        <div class="summary-card">
+                            <span class="summary-label">Rata-rata/Hari</span>
+                            <span class="summary-value" id="analysis-daily">Rp0</span>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <h2 class="section-title">Pengeluaran per Kategori</h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="category-chart"></canvas>
+                    </div>
+
+                    <div class="section-header">
+                        <h2 class="section-title">Tren Tabungan</h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="savings-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pengaturan -->
+            <section id="page-settings" class="page">
+                <div class="page-content">
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Tampilan</h3>
+                        <div class="setting-item">
+                            <span class="setting-label">Tema</span>
+                            <select id="theme-select" class="setting-select">
+                                <option value="auto">Otomatis</option>
+                                <option value="light">Terang</option>
+                                <option value="dark">Gelap</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Anggaran</h3>
+                        <button class="setting-item" id="btn-template">
+                            <span class="setting-label">Template Anggaran</span>
+                            <svg class="setting-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                        <button class="setting-item" id="btn-categories">
+                            <span class="setting-label">Kelola Kategori</span>
+                            <svg class="setting-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                        <div class="setting-item">
+                            <span class="setting-label">Hari Mulai Minggu</span>
+                            <select id="week-start-select" class="setting-select">
+                                <option value="1">Senin</option>
+                                <option value="0">Minggu</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Minggu Keuangan</h3>
+                        <button class="setting-item" id="btn-new-week">
+                            <span class="setting-label">Mulai Minggu Baru</span>
+                            <svg class="setting-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                        <button class="setting-item" id="btn-close-week">
+                            <span class="setting-label">Tutup Minggu Berjalan</span>
+                            <svg class="setting-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Data</h3>
+                        <button class="setting-item" id="btn-export">
+                            <span class="setting-label">Ekspor Data (JSON)</span>
+                            <svg class="setting-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                        <button class="setting-item" id="btn-import">
+                            <span class="setting-label">Impor Data (JSON)</span>
+                            <svg class="setting-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                        <input type="file" id="import-file" accept=".json" hidden>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3 class="settings-group-title">Tentang</h3>
+                        <div class="setting-item static">
+                            <span class="setting-label">Versi</span>
+                            <span class="setting-value">1.0.0</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FAB - Add Transaction -->
+        <button id="fab-add" class="fab" aria-label="Tambah transaksi">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+
+        <!-- Tab Bar -->
+        <nav class="tab-bar">
+            <button class="tab-item active" data-tab="home">
+                <svg class="tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span class="tab-label">Beranda</span>
+            </button>
+            <button class="tab-item" data-tab="transactions">
+                <svg class="tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <span class="tab-label">Transaksi</span>
+            </button>
+            <button class="tab-item" data-tab="savings">
+                <svg class="tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2h0V5z"></path>
+                    <path d="M2 9v1c0 1.1.9 2 2 2h1"></path>
+                    <path d="M16 11h0"></path>
+                </svg>
+                <span class="tab-label">Tabungan</span>
+            </button>
+            <button class="tab-item" data-tab="analysis">
+                <svg class="tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span class="tab-label">Analisis</span>
+            </button>
+            <button class="tab-item" data-tab="settings">
+                <svg class="tab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span class="tab-label">Pengaturan</span>
+            </button>
+        </nav>
+
+        <!-- Bottom Sheet Container -->
+        <div id="sheet-overlay" class="sheet-overlay hidden"></div>
+        <div id="sheet-container" class="sheet-container hidden">
+            <!-- Dynamic sheets will be inserted here -->
+        </div>
+
+        <!-- Toast Container -->
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/transactions.js"></script>
+    <script src="js/budget.js"></script>
+    <script src="js/savings.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/backup.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
