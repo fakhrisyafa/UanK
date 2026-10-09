@@ -98,37 +98,46 @@ const Transactions = {
         // Handle submit
         document.getElementById('form-transaction').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const amount = parseRupiah(document.getElementById('tx-amount').value);
-            const type = document.getElementById('tx-type').value;
-            const category = document.getElementById('tx-category').value;
-            const note = document.getElementById('tx-note').value;
-            const date = document.getElementById('tx-date').value;
             
-            if (amount <= 0) {
-                showToast('Nominal harus lebih dari 0', 'error');
-                return;
+            try {
+                const amount = parseRupiah(document.getElementById('tx-amount').value);
+                const type = document.getElementById('tx-type').value;
+                const category = document.getElementById('tx-category').value;
+                const note = document.getElementById('tx-note').value;
+                const date = document.getElementById('tx-date').value;
+                
+                if (amount <= 0) {
+                    showToast('Nominal harus lebih dari 0', 'error');
+                    return;
+                }
+                
+                const weekId = getWeekId(new Date(date));
+                
+                const tx = {
+                    id: generateId(),
+                    weekId,
+                    date: new Date(date).toISOString(),
+                    type,
+                    amount,
+                    category,
+                    note,
+                    createdAt: new Date().toISOString()
+                };
+                
+                console.log('[Transactions] Saving:', tx);
+                await DB.put('transactions', tx);
+                console.log('[Transactions] Saved successfully');
+                
+                hideSheet();
+                showToast('Transaksi berhasil disimpan', 'success');
+                
+                // Refresh current view
+                if (App.currentPage === 'home') Budget.refreshDashboard();
+                if (App.currentPage === 'transactions') Transactions.refreshList();
+            } catch (error) {
+                console.error('[Transactions] Save failed:', error);
+                showToast('Gagal menyimpan transaksi: ' + error.message, 'error');
             }
-            
-            const weekId = getWeekId(new Date(date));
-            
-            const tx = {
-                id: generateId(),
-                weekId,
-                date: new Date(date).toISOString(),
-                type,
-                amount,
-                category,
-                note,
-                createdAt: new Date().toISOString()
-            };
-            
-            await DB.put('transactions', tx);
-            hideSheet();
-            showToast('Transaksi berhasil disimpan', 'success');
-            
-            // Refresh current view
-            if (App.currentPage === 'home') Budget.refreshDashboard();
-            if (App.currentPage === 'transactions') Transactions.refreshList();
         });
     },
 
