@@ -124,6 +124,75 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const btnCategories = document.getElementById('btn-categories');
+    if (btnCategories) {
+        btnCategories.addEventListener('click', async () => {
+            const categories = await DB.getAll('categories');
+            const content = `
+                <div class="sheet-header">
+                    <h3 class="sheet-title">Kelola Kategori</h3>
+                    <button class="sheet-close" onclick="hideSheet()">Batal</button>
+                </div>
+                <div class="sheet-content">
+                    <div class="categories-scroll mb-md" id="manage-categories-list">
+                        ${categories.map(c => `
+                            <div class="category-item" style="flex-direction: row; justify-content: space-between; align-items: center; padding: 12px;">
+                                <span>${c.name} <small class="text-secondary">(${c.type === 'income' ? 'Masuk' : 'Keluar'})</small></span>
+                                <button class="button secondary" style="padding: 4px 8px; font-size: 12px; min-height: auto;" onclick="Settings.deleteCategory('${c.id}')">Hapus</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <form id="form-add-category">
+                        <div class="form-group">
+                            <label class="form-label">Nama Kategori Baru</label>
+                            <input type="text" id="new-cat-name" class="form-input" placeholder="Misal: Hiburan" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Jenis</label>
+                            <select id="new-cat-type" class="form-select">
+                                <option value="expense">Pengeluaran</option>
+                                <option value="income">Pemasukan</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="button primary full">Tambah Kategori</button>
+                    </form>
+                </div>
+            `;
+            showSheet(content);
+            
+            document.getElementById('form-add-category').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('new-cat-name').value.trim();
+                const type = document.getElementById('new-cat-type').value;
+                
+                if (name) {
+                    await DB.put('categories', {
+                        id: generateId(),
+                        name,
+                        type,
+                        percentage: 0
+                    });
+                    hideSheet();
+                    showToast('Kategori ditambahkan', 'success');
+                }
+            });
+        });
+    }
+
+    Settings.deleteCategory = async (id) => {
+        showModal({
+            title: 'Hapus Kategori',
+            message: 'Hapus kategori ini? Transaksi lama tetap tersimpan.',
+            confirmText: 'Hapus',
+            danger: true,
+            onConfirm: async () => {
+                await DB.delete('categories', id);
+                hideSheet();
+                showToast('Kategori dihapus', 'success');
+            }
+        });
+    };
+
     const btnNewWeek = document.getElementById('btn-new-week');
     if (btnNewWeek) btnNewWeek.addEventListener('click', () => Budget.showNewWeekSheet());
     

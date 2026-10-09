@@ -45,7 +45,7 @@ const Transactions = {
                 <form id="form-transaction">
                     <div class="form-group">
                         <label class="form-label">Nominal</label>
-                        <input type="number" id="tx-amount" class="form-input numeric" placeholder="0" required autofocus>
+                        <input type="text" id="tx-amount" class="form-input numeric" placeholder="0" required autofocus inputmode="numeric">
                     </div>
                     
                     <div class="form-group">
@@ -80,6 +80,10 @@ const Transactions = {
         `;
         
         showSheet(content);
+        
+        // Auto-format numeric input
+        const inputAmount = document.getElementById('tx-amount');
+        inputAmount.addEventListener('input', () => formatInputRupiah(inputAmount));
         
         // Handle toggle
         const toggleOptions = document.querySelectorAll('#tx-type-toggle .toggle-option');
@@ -146,7 +150,7 @@ const Transactions = {
                 <form id="form-edit-transaction">
                     <div class="form-group">
                         <label class="form-label">Nominal</label>
-                        <input type="number" id="tx-amount" class="form-input numeric" value="${tx.amount}" required>
+                        <input type="text" id="tx-amount" class="form-input numeric" value="${tx.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}" required inputmode="numeric">
                     </div>
                     
                     <div class="form-group">
@@ -184,6 +188,10 @@ const Transactions = {
         `;
         
         showSheet(content);
+        
+        // Auto-format numeric input
+        const inputAmount = document.getElementById('tx-amount');
+        inputAmount.addEventListener('input', () => formatInputRupiah(inputAmount));
         
         // Handle toggle
         const toggleOptions = document.querySelectorAll('#tx-type-toggle .toggle-option');

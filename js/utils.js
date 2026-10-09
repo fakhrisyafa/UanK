@@ -14,7 +14,10 @@
 function formatRupiah(amount) {
     // Ensure integer (remove any decimals)
     const intAmount = Math.floor(Math.abs(amount));
-    const formatted = intAmount.toLocaleString('id-ID');
+    
+    // Manual formatting with dot separator for thousands
+    const formatted = intAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
     return `Rp${formatted}`;
 }
 
@@ -104,9 +107,28 @@ function calculateBudgetStandard(totalAmount, percentages) {
     return result;
 }
 
-// ========================================
-// Date & Time Utilities
-// ========================================
+/**
+ * Format input number dengan titik pemisah ribuan saat mengetik
+ * @param {HTMLInputElement} input - Input element
+ */
+function formatInputRupiah(input) {
+    let value = input.value.replace(/\D/g, ''); // Remove non-digits
+    if (value) {
+        value = parseInt(value, 10).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+    input.value = value;
+}
+
+/**
+ * Setup auto-formatting untuk input numeric
+ */
+function setupRupiahInput(selector) {
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll(selector).forEach(input => {
+            input.addEventListener('input', () => formatInputRupiah(input));
+        });
+    });
+}
 
 /**
  * Get week period based on week start day setting

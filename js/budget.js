@@ -151,7 +151,7 @@ const Budget = {
             <div class="sheet-content">
                 <div class="form-group">
                     <label class="form-label">Uang Mingguan (Income)</label>
-                    <input type="number" id="new-week-income" class="form-input numeric" value="${lastIncome}" placeholder="0" autofocus>
+                    <input type="text" id="new-week-income" class="form-input numeric" value="${lastIncome ? lastIncome.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') : ''}" placeholder="0" autofocus inputmode="numeric">
                 </div>
                 
                 <div class="section-header mt-md">
@@ -169,6 +169,12 @@ const Budget = {
         
         const inputIncome = document.getElementById('new-week-income');
         const preview = document.getElementById('allocation-preview');
+        
+        // Auto-format numeric input
+        inputIncome.addEventListener('input', () => {
+            formatInputRupiah(inputIncome);
+            updatePreview();
+        });
         
         const updatePreview = () => {
             const income = parseRupiah(inputIncome.value);
