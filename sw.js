@@ -4,24 +4,7 @@
  */
 
 const CACHE_NAME = 'uank-v1';
-const ASSETS_TO_CACHE = [
-    '/UanK/',
-    '/UanK/index.html',
-    '/UanK/style.css',
-    '/UanK/app.js',
-    '/UanK/manifest.json',
-    '/UanK/js/db.js',
-    '/UanK/js/ui.js',
-    '/UanK/js/transactions.js',
-    '/UanK/js/budget.js',
-    '/UanK/js/savings.js',
-    '/UanK/js/reports.js',
-    '/UanK/js/settings.js',
-    '/UanK/js/backup.js',
-    '/UanK/js/utils.js',
-    '/UanK/icons/icon-192.svg',
-    '/UanK/icons/icon-512.svg'
-];
+const ASSETS_TO_CACHE = [];
 
 // Install event - cache assets
 self.addEventListener('install', (event) => {
