@@ -2,7 +2,7 @@
   "name": "UANK - Keuangan Pribadi",
   "short_name": "UANK",
   "description": "Aplikasi keuangan pribadi untuk mengelola uang mingguan, mencatat transaksi, dan membangun tabungan",
-  "start_url": "/",
+  "start_url": "/UanK/",
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#1A1A1A",
