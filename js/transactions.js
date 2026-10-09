@@ -128,6 +128,22 @@ const Transactions = {
                 await DB.put('transactions', tx);
                 console.log('[Transactions] Saved successfully');
                 
+                // Ensure week exists
+                let week = await DB.get('weeks', weekId);
+                if (!week) {
+                    console.log('[Transactions] Creating week automatically');
+                    week = {
+                        id: weekId,
+                        startDate: getWeekPeriod(new Date(date)).start.toISOString(),
+                        endDate: getWeekPeriod(new Date(date)).end.toISOString(),
+                        income: 0,
+                        status: 'active',
+                        allocations: {},
+                        createdAt: new Date().toISOString()
+                    };
+                    await DB.put('weeks', week);
+                }
+                
                 hideSheet();
                 showToast('Transaksi berhasil disimpan', 'success');
                 
