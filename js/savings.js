@@ -60,7 +60,7 @@ const Savings = {
                 <form id="form-withdraw">
                     <div class="form-group">
                         <label class="form-label">Nominal Penarikan</label>
-                        <input type="number" id="withdraw-amount" class="form-input numeric" placeholder="0" autofocus required>
+                        <input type="text" id="withdraw-amount" class="form-input numeric" placeholder="0" autofocus required inputmode="numeric">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Catatan (Wajib)</label>
@@ -72,6 +72,10 @@ const Savings = {
         `;
         
         showSheet(content);
+        
+        // Auto-format numeric input
+        const inputAmount = document.getElementById('withdraw-amount');
+        inputAmount.addEventListener('input', () => formatInputRupiah(inputAmount));
         
         document.getElementById('form-withdraw').addEventListener('submit', async (e) => {
             e.preventDefault();
