@@ -1,6 +1,6 @@
 # Rancangan Proyek: Aplikasi Keuangan Pribadi
 
-**Nama sementara:** DompetKu  
+**Nama sementara:** Uank  
 **Platform utama:** iPhone  
 **Tujuan:** Mengatur uang mingguan, mencatat pengeluaran, dan meningkatkan tabungan secara konsisten.
 
